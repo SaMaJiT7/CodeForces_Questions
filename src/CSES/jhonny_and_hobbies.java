@@ -1,8 +1,13 @@
-import java.util.*;
-import java.io.*;
+package CSES;
 
-public class Main {
-    // 1. FastReader Class for efficient input
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class jhonny_and_hobbies {
     public static class FastReader {
         BufferedReader br;
         StringTokenizer st;
@@ -40,47 +45,33 @@ public class Main {
     }
 
     // 2. The solve method: Your logic goes here
-
+    static long mod = 1000000007L;
     public static void solve(FastReader fr, PrintWriter out) {
-        int n = fr.nextInt() ;
-        if(n == 3){
-            out.println(1 +" "+2+" "+3);
-            return;
+        int n = fr.nextInt();
+        int[] arr = new int[n+1];
+        HashSet<Integer> map = new HashSet<>();
+        for(int i = 1; i <= n ; i++){
+            arr[i] = fr.nextInt();
+            map.add(arr[i]);
         }
-        List<Integer> even = new ArrayList<>();
-        List<Integer> odd = new ArrayList<>();
-        int f = 2;
-        for(int i = 0; i < n/2; i++){
-            even.add(f);
-            odd.add(f+1);
-            f += 2;
-        }
-        if(((n/2) & 1) == 0){
-            int val = odd.get(odd.size()-1);
-            val = val ^ 1;
-            odd.remove(odd.size()-1);
-            int q = (int) 1L << 20;
-            val = val ^ q;
-            int val2 = odd.get(odd.size()-1) ^ q;
-            odd.remove(odd.size()-1);
-            odd.add(val2);
-            odd.add(val);
-        }
-        for(int i = 1; i <= n; i++){
-            if((n&1) == 0 && i == n){
-                out.print(0);
+
+        for(int k = 1; k < 1025; k++){
+            boolean ispossible = true;
+            for(int i = 1; i <= n; i++){
+                int val = arr[i] ^ k;
+                if(!map.contains(val)){
+                    ispossible = false;
+                    break;
+                }
             }
-            else if((i&1) == 1){
-                out.print(odd.get(odd.size()-1) + " ");
-                odd.remove(odd.size()-1);
-            }
-            else{
-                out.print(even.get(even.size()-1)+ " ");
-                even.remove(even.size()-1);
+            if(ispossible){
+                out.println(k);
+                return;
             }
         }
-        out.println();
+        out.println(-1);
     }
+
     // 3. Main method: Handles multiple test cases and I/O flushing
     public static void main(String[] args) {
         FastReader fr = new FastReader();

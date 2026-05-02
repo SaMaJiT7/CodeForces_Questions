@@ -1,8 +1,15 @@
-import java.util.*;
-import java.io.*;
+package codeforces;
 
-public class Main {
-    // 1. FastReader Class for efficient input
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
+
+public class Oarray {
     public static class FastReader {
         BufferedReader br;
         StringTokenizer st;
@@ -41,49 +48,44 @@ public class Main {
 
     // 2. The solve method: Your logic goes here
 
-    public static void solve(FastReader fr, PrintWriter out) {
+    public static void solve(Main.FastReader fr, PrintWriter out) {
         int n = fr.nextInt() ;
-        if(n == 3){
-            out.println(1 +" "+2+" "+3);
-            return;
+        int[] a = new int[n];
+        for(int i = 0; i < n; i++){
+            a[i] = fr.nextInt();
         }
-        List<Integer> even = new ArrayList<>();
-        List<Integer> odd = new ArrayList<>();
-        int f = 2;
-        for(int i = 0; i < n/2; i++){
-            even.add(f);
-            odd.add(f+1);
-            f += 2;
+        boolean[] used = new boolean[n];
+        Arrays.fill(used,false);
+        List<Integer> ans = new ArrayList<>();
+
+        int mask = 0; int index = 0;
+        for(int iter = 30; iter >= 0; iter--){
+            int maxmask = mask;
+            index = -1;
+
+            for(int i = 0 ; i < n; i++){
+                if(!used[i] && (a[i] | mask) >  maxmask){
+                    maxmask = (a[i] | mask);
+                    index = i;
+                }
+            }
+
+            if(index == -1) break;
+
+            used[index] = true;
+            ans.add(a[index]);
+            mask = maxmask;
         }
-        if(((n/2) & 1) == 0){
-            int val = odd.get(odd.size()-1);
-            val = val ^ 1;
-            odd.remove(odd.size()-1);
-            int q = (int) 1L << 20;
-            val = val ^ q;
-            int val2 = odd.get(odd.size()-1) ^ q;
-            odd.remove(odd.size()-1);
-            odd.add(val2);
-            odd.add(val);
-        }
-        for(int i = 1; i <= n; i++){
-            if((n&1) == 0 && i == n){
-                out.print(0);
-            }
-            else if((i&1) == 1){
-                out.print(odd.get(odd.size()-1) + " ");
-                odd.remove(odd.size()-1);
-            }
-            else{
-                out.print(even.get(even.size()-1)+ " ");
-                even.remove(even.size()-1);
-            }
+        for(int i = 0; i < n; i++) if(!used[i]) ans.add(a[i]);
+
+        for(int i = 0; i < n; i++){
+            out.print(ans.get(i) + " ");
         }
         out.println();
     }
     // 3. Main method: Handles multiple test cases and I/O flushing
     public static void main(String[] args) {
-        FastReader fr = new FastReader();
+        Main.FastReader fr = new Main.FastReader();
         PrintWriter out = new PrintWriter(System.out);
 
         int t = fr.nextInt(); // Read the number of test cases

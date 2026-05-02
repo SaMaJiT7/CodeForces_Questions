@@ -1,9 +1,14 @@
-import java.util.*;
-import java.io.*;
+package rated_900;
 
-public class Main {
-    // 1. FastReader Class for efficient input
-    public static class FastReader {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class Forked {
+    static class FastReader {
         BufferedReader br;
         StringTokenizer st;
 
@@ -11,7 +16,7 @@ public class Main {
             br = new BufferedReader(new InputStreamReader(System.in));
         }
 
-        public String next() {
+        String next() {
             while (st == null || !st.hasMoreElements()) {
                 try {
                     String line = br.readLine();
@@ -24,11 +29,11 @@ public class Main {
             return st.nextToken();
         }
 
-        public int nextInt() { return Integer.parseInt(next()); }
-        public long nextLong() { return Long.parseLong(next()); }
+        int nextInt() { return Integer.parseInt(next()); }
+        long nextLong() { return Long.parseLong(next()); }
         double nextDouble() { return Double.parseDouble(next()); }
 
-        public String nextLine() {
+        String nextLine() {
             String str = "";
             try {
                 str = br.readLine();
@@ -40,47 +45,38 @@ public class Main {
     }
 
     // 2. The solve method: Your logic goes here
-
+    static long mod = 1000000007L;
     public static void solve(FastReader fr, PrintWriter out) {
-        int n = fr.nextInt() ;
-        if(n == 3){
-            out.println(1 +" "+2+" "+3);
-            return;
+        int a = fr.nextInt(), b = fr.nextInt();
+        //King's posi
+        int xk = fr.nextInt() , yk = fr.nextInt();
+        //Queen's Posi
+        int xq = fr.nextInt(), yq = fr.nextInt();
+        int[][] move = {{+a,+b},{+a,-b},{-a,+b},{-a,-b},{+b,+a},{+b,-a},{-b,+a},{-b,-a}};
+        HashSet<String> king = new HashSet<>();
+        HashSet<String> queen = new HashSet<>();
+        for(int[] val : move){
+            int dx = val[0];
+            int dy = val[1];
+            //King's position
+            int Xk = xk + dx;
+            int Yk = yk + dy;
+            king.add(Xk+"#"+Yk);
+            //queen's position
+            int Xq = xq + dx;
+            int Yq = yq + dy;
+            queen.add(Xq+"#"+Yq);
         }
-        List<Integer> even = new ArrayList<>();
-        List<Integer> odd = new ArrayList<>();
-        int f = 2;
-        for(int i = 0; i < n/2; i++){
-            even.add(f);
-            odd.add(f+1);
-            f += 2;
-        }
-        if(((n/2) & 1) == 0){
-            int val = odd.get(odd.size()-1);
-            val = val ^ 1;
-            odd.remove(odd.size()-1);
-            int q = (int) 1L << 20;
-            val = val ^ q;
-            int val2 = odd.get(odd.size()-1) ^ q;
-            odd.remove(odd.size()-1);
-            odd.add(val2);
-            odd.add(val);
-        }
-        for(int i = 1; i <= n; i++){
-            if((n&1) == 0 && i == n){
-                out.print(0);
-            }
-            else if((i&1) == 1){
-                out.print(odd.get(odd.size()-1) + " ");
-                odd.remove(odd.size()-1);
-            }
-            else{
-                out.print(even.get(even.size()-1)+ " ");
-                even.remove(even.size()-1);
+        int count = 0;
+        for(String val : king){
+            if(queen.contains(val)){
+                count++;
             }
         }
-        out.println();
+        out.println(count);
     }
+
+
     // 3. Main method: Handles multiple test cases and I/O flushing
     public static void main(String[] args) {
         FastReader fr = new FastReader();

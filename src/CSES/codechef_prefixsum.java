@@ -1,8 +1,12 @@
-import java.util.*;
-import java.io.*;
+package CSES;
 
-public class Main {
-    // 1. FastReader Class for efficient input
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.StringTokenizer;
+
+public class codechef_prefixsum {
     public static class FastReader {
         BufferedReader br;
         StringTokenizer st;
@@ -28,7 +32,7 @@ public class Main {
         public long nextLong() { return Long.parseLong(next()); }
         double nextDouble() { return Double.parseDouble(next()); }
 
-        public String nextLine() {
+        String nextLine() {
             String str = "";
             try {
                 str = br.readLine();
@@ -40,57 +44,54 @@ public class Main {
     }
 
     // 2. The solve method: Your logic goes here
-
+    static long mod = 1000000007L;
     public static void solve(FastReader fr, PrintWriter out) {
-        int n = fr.nextInt() ;
-        if(n == 3){
-            out.println(1 +" "+2+" "+3);
-            return;
-        }
-        List<Integer> even = new ArrayList<>();
-        List<Integer> odd = new ArrayList<>();
-        int f = 2;
-        for(int i = 0; i < n/2; i++){
-            even.add(f);
-            odd.add(f+1);
-            f += 2;
-        }
-        if(((n/2) & 1) == 0){
-            int val = odd.get(odd.size()-1);
-            val = val ^ 1;
-            odd.remove(odd.size()-1);
-            int q = (int) 1L << 20;
-            val = val ^ q;
-            int val2 = odd.get(odd.size()-1) ^ q;
-            odd.remove(odd.size()-1);
-            odd.add(val2);
-            odd.add(val);
-        }
+        int n = fr.nextInt() , m = fr.nextInt();
+        int[][] grid = new int[n+1][m+1];
         for(int i = 1; i <= n; i++){
-            if((n&1) == 0 && i == n){
-                out.print(0);
+            for(int j = 1; j <= m; j++){
+                grid[i][j] = fr.nextInt();
             }
-            else if((i&1) == 1){
-                out.print(odd.get(odd.size()-1) + " ");
-                odd.remove(odd.size()-1);
+        }
+        int[][] prefix = new int[n+1][m+1];
+        for(int i = 0; i <= n; i++) prefix[i][0] = 0;
+        for(int j = 0; j <= m; j++) prefix[0][j] = 0;
+
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= m; j++){
+                prefix[i][j] = (grid[i][j] == 0 ? 1 : 0);
+
+                if(i > 0) prefix[i][j] += prefix[i-1][j];
+                if(j > 0) prefix[i][j] += prefix[i][j-1];
+                if(i > 0 && j > 0) prefix[i][j] -= prefix[i-1][j-1];
+            }
+        }
+        int q = fr.nextInt();
+        for(int i = 1; i <= q; i++){
+            int a = fr.nextInt() , b = fr.nextInt(),  c = fr.nextInt(),  d = fr.nextInt();
+
+            int count = prefix[c][d] - prefix[c][b-1] - prefix[a-1][d] + prefix[a-1][b-1];
+
+            if(count > 0){
+                out.println(0);
             }
             else{
-                out.print(even.get(even.size()-1)+ " ");
-                even.remove(even.size()-1);
+                out.println(1);
             }
         }
-        out.println();
     }
+
+
     // 3. Main method: Handles multiple test cases and I/O flushing
     public static void main(String[] args) {
         FastReader fr = new FastReader();
         PrintWriter out = new PrintWriter(System.out);
 
-        int t = fr.nextInt(); // Read the number of test cases
-        while (t-- > 0) {
-            solve(fr, out);   // Run your logic for each case
-        }
-//        solve(fr, out);
+//        int t = fr.nextInt(); // Read the number of test cases
+//        while (t-- > 0) {
+//            solve(fr, out);   // Run your logic for each case
+//        }
+        solve(fr, out);
 
         out.flush(); // Crucial: ensures everything is printed
         out.close();
